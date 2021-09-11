@@ -3,8 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"github.com/tom1236908745/thesaurus"
+	"log"
 	"os"
 )
 
@@ -16,10 +16,10 @@ func main() {
 		word := s.Text()
 		syns, err := thesaurus.Synonyms(word)
 		if err != nil {
-			log.Fatalln("Failed when looking for synonyms for \""+word+"\"", err)
+			log.Fatalln("\""+word+"\"の検索に失敗しました。", err)
 		}
 		if len(syns) == 0 {
-			log.Fatalln("Couldn't find any synonyms for \"" + word + "\"")
+			log.Fatalln("\"" + word + "\"に類義語が見つかりませんでした。")
 		}
 		for _, syn := range syns {
 			fmt.Println(syn)

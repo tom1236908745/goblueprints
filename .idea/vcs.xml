@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/goChat" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/mod" vcs="Git" />
   </component>
 </project>
