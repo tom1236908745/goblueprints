@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"flag"
 	"log"
 	"net/http"
@@ -9,7 +11,7 @@ import (
 	"text/template"
 
 	"github.com/stretchr/objx"
-
+	"github.com/joho/godotenv"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/providers/github"
 	"github.com/stretchr/gomniauth/providers/google"
@@ -46,6 +48,12 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t.temp1.Execute(w, data)
 }
 func main() {
+	// envファイル読み込み
+	err := godotenv.Load(fmt.Sprintf("../%s.env", os.Getenv("GO_ENV")))
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	// フラグのデフォルト値に8080を指定
 	var addr = flag.String("addr", ":8080", "アプリケーションのアドレス")
 	// フラグを解釈
@@ -54,8 +62,8 @@ func main() {
 	// Gomniauthのセットアップ
 	gomniauth.SetSecurityKey("tom1233908745aizu")
 	gomniauth.WithProviders(
-		google.New("664141965972-sk7frld5fargmmvl8tad451d8mq7g7e0.apps.googleusercontent.com", "wLim6OrP7dXVEAZGty5ghQOv", "http://localhost:8080/auth/callback/google"),
-		github.New("1164c0454d8a00a1c268", "14a3d44c8f7edfb1d9ab457da5d6ddd831b8acff", "http://localhost:8080/auth/callback/github"),
+		google.New(os.Getenv("GOOGLECLIENTID"), os.Getenv("GOOGLECLIENTSECRET"), "http://localhost:8080/auth/callback/google"),
+		github.New(os.Getenv("GITHUBCLIENTID"), os.Getenv("GITHUBCLIENTSECRET"), "http://localhost:8080/auth/callback/github"),
 	)
 	// ここで、様々な画像の適応の仕方が出来る。
 	r := newRoom(avatars)
@@ -77,7 +85,7 @@ func main() {
 		w.Header()["Location"] = []string{"/chat"}
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	})
-	http.Handle("/upload", &templateHandler{filename: "upload.html"})
+	http.Handle("/upload", &templateHandler{filename: "upload.gtpl"})
 	http.HandleFunc("/uploader", uploaderHandler)
 	http.Handle("/avatars/", http.StripPrefix("/avatars/", http.FileServer(http.Dir("./avatars"))))
 	// チャットルームを開始
